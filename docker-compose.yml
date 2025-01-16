@@ -20,6 +20,7 @@ services:
   clickhouse:
     image: 'clickhouse/clickhouse-server:24.3.3.102'
     container_name: clickhouse
+    hostname: clickhouse
     volumes:
       - ./clickhouse-server/config.d/config.xml:/etc/clickhouse-server/config.d/config.xml
       - ./clickhouse-server/users.d/users.xml:/etc/clickhouse-server/users.d/users.xml
