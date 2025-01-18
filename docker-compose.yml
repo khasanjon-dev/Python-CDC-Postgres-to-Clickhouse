@@ -132,6 +132,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   console:
     image: docker.redpanda.com/redpandadata/console:v2.3.8
@@ -158,11 +160,13 @@ services:
     container_name: clickhouse
     hostname: clickhouse
     volumes:
+      - clickhouse_data:/var/lib/clickhouse
       - ./clickhouse-server/config.d/config.xml:/etc/clickhouse-server/config.d/config.xml
       - ./clickhouse-server/users.d/users.xml:/etc/clickhouse-server/users.d/users.xml
     ports:
       - '8123:8123'
       - '9004:9004'
+      - '9000:9000'
     depends_on:
       - clickhouse-keeper
   clickhouse-keeper:
@@ -173,3 +177,6 @@ services:
       - ./clickhouse-keeper/keeper_config.xml:/etc/clickhouse-keeper/keeper_config.xml
     ports:
       - '9181:9181'
+volumes:
+  clickhouse_data:
+  postgres_data:
