@@ -1,18 +1,31 @@
 {
   "type": "record",
-  "name": "ingredients",
+  "name": "Value",
   "fields": [
     {
-      "name": "ingredient_id",
+      "name": "id",
       "type": "int"
     },
     {
-      "name": "ingredient_name",
+      "name": "username",
       "type": "string"
     },
     {
-      "name": "ingredient_price",
-      "type": "int"
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "created_at",
+      "type": [
+        {
+          "type": "long",
+          "connect.version": 1,
+          "connect.default": 0,
+          "connect.name": "io.debezium.time.MicroTimestamp"
+        },
+        "null"
+      ],
+      "default": 0
     }
   ]
 }

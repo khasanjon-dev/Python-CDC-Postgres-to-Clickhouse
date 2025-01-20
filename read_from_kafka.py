@@ -1,45 +1,46 @@
 import io
-import json
 
 import avro.schema
 from avro.io import DatumReader, BinaryDecoder
 from kafka import KafkaConsumer
 
-# Load the Avro schema
-schema = avro.schema.parse(open("./schema.avsc", "rb").read())
-
-# Create a DatumReader
+# Load the schema from the file
+schema = avro.schema.parse(open("schema.avsc", "rb").read())
 reader = DatumReader(schema)
 
 
 def decode(msg_value):
+    # Decode the message using Avro schema and DatumReader
     message_bytes = io.BytesIO(msg_value)
-    message_bytes.seek(7)
     decoder = BinaryDecoder(message_bytes)
     event_dict = reader.read(decoder)
     return event_dict
 
 
-# configure the Kafka consumer
-consumer = KafkaConsumer("postgres.public.ingredients",
-                         bootstrap_servers=["localhost:29092"])
+# Create a Kafka consumer
+consumer = KafkaConsumer(
+    "pg.public.users",
+    bootstrap_servers=["localhost:9092"],
+    auto_offset_reset='earliest',
+    group_id='my-consumer-group'
+)
 
-print(consumer.bootstrap_connected())
-print(consumer.subscription())
+print("Connected to Kafka:", consumer.bootstrap_connected())
+print("Current subscription:", consumer.subscription())
 
-# Continuously poll for new messages
-print("Listening..")
+print("Listening to topic 'pg.public.users'...")
 while True:
-    count = 0
-    for msg in consumer:
-        data = decode(msg.value)
-        print(data)
+    try:
+        for msg in consumer:
+            # Print raw message value for debugging
+            print("Raw message value:", msg.value)
 
-        print("Saving it to s3 bucket..")
-        # Save the dictionary to a JSON file
-        json_file = 'data.json'
-        with open(json_file, 'w') as f:
-            json.dump(data, f)
+            data = decode(msg.value)
+            print(data)
 
-        # Upload the JSON file to S3
-        count += 1
+    except KeyboardInterrupt:
+        print("Consumer stopped by user.")
+        break
+    except Exception as e:
+        print(f"Error: {e}")
+        break

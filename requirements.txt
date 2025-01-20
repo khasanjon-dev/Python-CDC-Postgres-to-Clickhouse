@@ -1,2 +1,4 @@
-kafka-python-ng
-avro
+#kafka-python-ng
+#avro
+confluent-kafka[avro]
+httpx
