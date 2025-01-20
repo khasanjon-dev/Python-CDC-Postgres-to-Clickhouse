@@ -1,4 +1,0 @@
-requests
-clickhouse-driver
-fastavro
-confluent-kafka
